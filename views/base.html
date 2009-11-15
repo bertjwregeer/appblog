@@ -6,15 +6,15 @@
 		<link rel="stylesheet" href="/main.css" />
 		<link rel="shortcut icon" href="/favicon.ico">
 		<link rel="alternate" type="application/atom+xml" title="" href="/feed/" />
-		<link rel="author" href="/contact/" />
+		<link rel="author" href="{{ site.contact }}" />
 		
 		<!--[if IE]><script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
 		<!--[if lt IE 8]> <script type="text/javascript" src="http://ie7-js.googlecode.com/svn/version/2.0(beta3)/IE8.js"></script><![endif]-->
 	</head>
 	<body>
 		<header>
-			<h1>Using Namespace</h1>
-			<h2>A blog about PCB's, Electronics and Code</h2>
+			<h1>{{ site.title }}</h1>
+			<h2>{{ site.description }}</h2>
 			<nav>
 				<ul>
 					<li></li>
@@ -23,10 +23,10 @@
 			</nav>
 		</header>
 		
-		{body contents here}
+		{{ body }}
 		
 		<footer>
-			Copyright &copy; Bert JW Regeer. All rights reserved.
+			Copyright &copy; <a href="{{ site.contact }}">Bert JW Regeer</a>. All rights reserved.
 		</footer>
 	</body>
 </html>
