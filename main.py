@@ -20,8 +20,10 @@ from google.appengine.api import users
 from google.appengine.ext import webapp
 from google.appengine.ext.webapp.util import run_wsgi_app
 
-import models
+import config
+
 import handlers
+import utils
 	
 def main():
 	application = webapp.WSGIApplication(
