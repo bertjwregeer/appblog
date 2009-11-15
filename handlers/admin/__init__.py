@@ -15,19 +15,4 @@
  #
 ###
 
-import cgi
-from google.appengine.api import users
-from google.appengine.ext import webapp
-from google.appengine.ext.webapp.util import run_wsgi_app
-
-from handlers import admin
-import utils
-	
-def main():
-	application = webapp.WSGIApplication(
-	[('/admin/(.*)', admin.MainPage)],
-	debug=True)
-	run_wsgi_app(application)
-
-if __name__ == "__main__":
-	main()
+from MainPage import MainPage

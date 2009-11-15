@@ -22,6 +22,10 @@ handlers:
   static_files: static/main.css
   upload: static/main.css
 
+- url: /admin/main.css
+  static_files: static/main-admin.css
+  upload: static/main-admin.css
+
 - url: /admin/.*
   script: admin.py
   login: admin
