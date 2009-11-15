@@ -15,7 +15,10 @@
  #
 ###
 
-from greetings import Greeting
-from entry import Entry
-from tag import Tag
-from shorturl import Shorturl
+
+from google.appengine.ext import db
+
+class Shorturl(db.Model):
+	uripath = db.StringProperty(required=True)
+	httpcode = db.IntegerProperty(required=True)
+	location = db.StringProperty()
