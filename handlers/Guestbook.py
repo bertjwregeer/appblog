@@ -21,6 +21,9 @@ from google.appengine.ext import webapp
 import models
 
 class Guestbook(webapp.RequestHandler):
+	def get(self):
+		pass
+		
 	def post(self):
 		greeting = models.Greeting()
 
