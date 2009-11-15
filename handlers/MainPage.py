@@ -20,8 +20,24 @@ from google.appengine.api import users
 from google.appengine.ext import webapp
 from google.appengine.ext.webapp.util import run_wsgi_app
 
+import config
+
 import models
+import utils
 
 class MainPage(webapp.RequestHandler):
+	def initialize(self, request, response):
+		super(MainPage, self).initialize(request, response);
+		self.view = utils.View(self);
+	
 	def get(self, path):
-		self.response.out.write("<html><body>"+ path + "</body></html>")
+		if config.SETTINGS["shorturl"]:
+			if path != "":
+				# Check to see if the URL exists and if so do a redirect
+				surl = utils.Shorturl(self)
+				if surl.domagic(path):
+					return
+		
+		self.view.part("body", "test.html", params={"test": dir(self.view)})
+		
+		self.response.out.write(self.view.final("base.html"))
