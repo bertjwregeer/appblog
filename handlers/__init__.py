@@ -15,5 +15,4 @@
  #
 ###
 
-from Guestbook import Guestbook
 from MainPage import MainPage

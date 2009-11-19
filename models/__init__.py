@@ -15,7 +15,6 @@
  #
 ###
 
-from greetings import Greeting
 from entry import Entry
 from tag import Tag
 from shorturl import Shorturl
