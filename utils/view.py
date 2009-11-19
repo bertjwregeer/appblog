@@ -61,7 +61,13 @@ class View():
 					config.SETTINGS["contact"] = "/" + config.SETTINGS["contact"]
 				
 				self.defaults['site']['contact'] = self.request.application_url + config.SETTINGS["contact"]
+	def inject(self, params):
+		"""
+		Allows the addition of extra variables into the defaults that are 
+		accessible to all the templates, can override already set variables.
+		"""
 		
+		self.defaults.update(params)	
 		
 	def part(self, part, tfile = "", params = {}):
 		"""
@@ -82,7 +88,7 @@ class View():
 		Renders a template file and returns it to caller.
 		"""
 		
-		# The parameters passed in for the part are more important than the default values set
+		# Parameters passed in may override default values
 		values = self.defaults
 		values.update(params);
 		
