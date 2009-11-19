@@ -26,4 +26,3 @@ class RequestHandler(webapp.RequestHandler):
 	def initialize(self, request, response):
 		super(RequestHandler, self).initialize(request, response);
 		self.view = utils.View(self);
-		
