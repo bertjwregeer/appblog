@@ -18,6 +18,7 @@
 import cgi
 from google.appengine.ext import webapp
 from google.appengine.ext.webapp.util import run_wsgi_app
+from google.appengine.api import memcache
 
 import models
 
@@ -49,12 +50,15 @@ class Shorturl():
 		301 = Permanent Redirect
 		"""
 		
-		# Prepare the query
-		q = self.model.all().filter("uripath =", path)
+		surl = memcache.get("surl." + path)
 		
-		surl = q.get()
+		if not surl:
+		# Prepare the query
+			q = self.model.all().filter("uripath =", path)
+			surl = q.get()
+			memcache.add("surl." + path, surl)
 	
-		if surl != None:
+		if surl:
 			code = surl.httpcode
 			
 			if code == 500:
@@ -71,6 +75,8 @@ class Shorturl():
 			elif code == 301:
 				self.handler.redirect(surl.location, permanent=True)
 			else:
+				# If we don't know the status code, we just output it directly 
+				# and the location field becomes a simple message that is output directly to the browser
 				self.handler.response.set_status(code)
 				self.handler.response.out.write(surl.location)
 			
