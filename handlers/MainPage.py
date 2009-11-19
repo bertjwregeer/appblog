@@ -34,7 +34,8 @@ class MainPage(utils.RequestHandler):
 				surl = utils.Shorturl(self)
 				if surl.domagic(path):
 					return
-		
+					
+		self.view.inject({ "page": {"title": "Main"}})
 		self.view.part("body", "test.html", params={"test": memcache.get_stats() })
 		
 		self.response.out.write(self.view.final("base.html"))
