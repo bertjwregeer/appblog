@@ -15,6 +15,15 @@
  #
 ###
 
-from view import View
-from shorturl import Shorturl
-from requesthandler import RequestHandler
+import cgi
+from google.appengine.ext import webapp
+from google.appengine.ext.webapp.util import run_wsgi_app
+
+import utils
+
+class RequestHandler(webapp.RequestHandler):
+	"""Replace the webapp.Requesthandler initialize function to provide a view automatically"""
+	def initialize(self, request, response):
+		super(RequestHandler, self).initialize(request, response);
+		self.view = utils.View(self);
+		
