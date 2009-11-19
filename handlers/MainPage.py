@@ -17,6 +17,7 @@
 
 import cgi
 from google.appengine.api import users
+from google.appengine.api import memcache
 from google.appengine.ext import webapp
 from google.appengine.ext.webapp.util import run_wsgi_app
 
@@ -25,11 +26,7 @@ import config
 import models
 import utils
 
-class MainPage(webapp.RequestHandler):
-	def initialize(self, request, response):
-		super(MainPage, self).initialize(request, response);
-		self.view = utils.View(self);
-	
+class MainPage(utils.RequestHandler):
 	def get(self, path):
 		if config.SETTINGS["shorturl"]:
 			if path != "":
@@ -38,6 +35,6 @@ class MainPage(webapp.RequestHandler):
 				if surl.domagic(path):
 					return
 		
-		self.view.part("body", "test.html", params={"test": dir(self.view)})
+		self.view.part("body", "test.html", params={"test": memcache.get_stats() })
 		
 		self.response.out.write(self.view.final("base.html"))
