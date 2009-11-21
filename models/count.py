@@ -15,7 +15,10 @@
  #
 ###
 
-from entry import Entry
-from tag import Tag
-from shorturl import Shorturl
-from count import Count
+
+from google.appengine.ext import db
+
+class Count(db.Model):
+	namespace = db.StringProperty(required=True)
+	name = db.StringProperty(required=True)
+	count = db.IntegerProperty(required=True, default=0)
