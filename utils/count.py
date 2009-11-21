@@ -63,6 +63,7 @@ class Count():
 				scount.delete()
 			else:
 				scount.put()
+			break
 		memcache.decr("count." + namespace + "." + name)
 
 	def curcount(self, namespace, name):
