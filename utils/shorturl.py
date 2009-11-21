@@ -51,13 +51,13 @@ class Shorturl():
 		301 = Permanent Redirect
 		"""
 		
-		surl = memcache.get("surl." + path)
+		surl = memcache.get("shorturl." + path)
 		
 		if not surl:
 		# Prepare the query
 			q = self.model.all().filter("uripath =", path)
 			surl = q.get()
-			memcache.add("surl." + path, surl)
+			memcache.add("surl." + path, surl, 3600)
 	
 		if surl:
 			self.count.inc("shorturl", surl.uripath)
@@ -86,4 +86,3 @@ class Shorturl():
 			return True
 		else:
 			return False
-			
