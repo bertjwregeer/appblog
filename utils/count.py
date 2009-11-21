@@ -76,5 +76,14 @@ class Count():
 			total = 0
 			for scount in self.model.all().filter("namespace = ", namespace).filter("name = ", name):
 				total += scount.count
-			memcache.add("count." + namespace + "." + name, total, 120)
+			memcache.add("count." + namespace + "." + name, total, 3600)
 		return total
+		
+	def clear(self, namespace, name):
+		"""
+		Clear the counter, reset it back to 0
+		"""
+		
+		for scount in self.model.all().filter("namespace = ", namespace).filter("name = ", name):
+				scount.delete()
+		memcache.delete("count." + namespace + "." + name)
