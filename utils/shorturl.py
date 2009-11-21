@@ -21,6 +21,7 @@ from google.appengine.ext.webapp.util import run_wsgi_app
 from google.appengine.api import memcache
 
 import models
+import utils
 
 class Shorturl():
 	"""
@@ -32,10 +33,10 @@ class Shorturl():
 	page which contains the documentation, or blog post that contains the information.
 	
 	"""
-	
 	def __init__(self, handler):
 		self.model = models.Shorturl
 		self.handler = handler
+		self.count = utils.Count()
 		
 	def domagic(self, path):
 		"""
@@ -59,6 +60,8 @@ class Shorturl():
 			memcache.add("surl." + path, surl)
 	
 		if surl:
+			self.count.inc("shorturl", surl.uripath)
+			
 			code = surl.httpcode
 			
 			if code == 500:
@@ -79,7 +82,7 @@ class Shorturl():
 				# and the location field becomes a simple message that is output directly to the browser
 				self.handler.response.set_status(code)
 				self.handler.response.out.write(surl.location)
-			
+
 			return True
 		else:
 			return False
