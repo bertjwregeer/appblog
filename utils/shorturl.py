@@ -57,7 +57,7 @@ class Shorturl():
 		# Prepare the query
 			q = self.model.all().filter("uripath =", path)
 			surl = q.get()
-			memcache.add("surl." + path, surl, 3600)
+			memcache.add("shorturl." + path, surl, 3600)
 	
 		if surl:
 			self.count.inc("shorturl", surl.uripath)
