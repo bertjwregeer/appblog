@@ -19,6 +19,6 @@
 from google.appengine.ext import db
 
 class Shorturl(db.Model):
-	uripath = db.StringProperty(required=True)
-	httpcode = db.IntegerProperty(required=True)
-	location = db.StringProperty()
+	uripath = db.StringProperty(verbose_name="Path", required=True)
+	httpcode = db.IntegerProperty(verbose_name="HTTP code", required=True)
+	location = db.StringProperty(verbose_name="New location")
