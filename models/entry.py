@@ -25,4 +25,4 @@ class Entry(db.Model):
 	body = db.TextProperty(required=True)
 	published = db.DateTimeProperty(auto_now_add=True)
 	updated = db.DateTimeProperty(auto_now=True)
-	tags = db.ListProperty(db.Category)
+	tags = db.ListProperty(db.Key)

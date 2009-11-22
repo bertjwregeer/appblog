@@ -21,3 +21,4 @@ from google.appengine.ext import db
 class Link(db.Model):
 	link = db.StringProperty(required=True)
 	ltype = db.IntegerProperty(required=True)
+	order = db.IntegerProperty(required=True)

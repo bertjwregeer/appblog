@@ -18,6 +18,11 @@
 
 from google.appengine.ext import db
 
+import models
+
 class Tag(db.Model):
 	tag = db.CategoryProperty(required=True)
-	count = db.IntegerProperty(required=True)
+	
+	@property
+	def entries():
+		return models.Entry.all().filter("tags = ", self.key())
