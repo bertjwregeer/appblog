@@ -1,29 +1,32 @@
 <!DOCTYPE html>
 <html lang="en">
 	<head>
-		<title></title>
+		<title>{{ site.title }} - {{ page.title }}</title>
 		<meta charset="utf-8" />
 		<link rel="stylesheet" href="/admin/main.css" />
-		<link rel="shortcut icon" href="/favicon.ico">
 		
 		<!--[if IE]><script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
 		<!--[if lt IE 8]> <script type="text/javascript" src="http://ie7-js.googlecode.com/svn/version/2.0(beta3)/IE8.js"></script><![endif]-->
 	</head>
 	<body>
 		<header>
-			<h1>AppBlog Administrator Interface</h1>
-			<nav>
-				<ul>
-					<li></li>
-					<li></li>
-				</ul>
-			</nav>
+			<h1>{{ site.title }}</h1>
+			<h2>{{ page.title }}</h2>
 		</header>
 		
-		{body contents here}
+		<div id="Main">
+		{{ body }}		
+		</div>
+		
+		<nav>
+			<ul>
+				<li><a href="{{ site.appurl }}admin/">Admin Home</a></li>
+				<li><a href="{{ site.appurl }}admin/shorturl/">Shorturl</a></li>
+			</ul>
+		</nav>
 		
 		<footer>
-			Copyright &copy; Bert JW Regeer. All rights reserved.
+			{% include "../copyright.html" %}
 		</footer>
 	</body>
 </html>
