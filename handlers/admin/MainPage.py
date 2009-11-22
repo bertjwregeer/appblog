@@ -17,11 +17,19 @@
 
 import cgi
 from google.appengine.api import users
+from google.appengine.api import memcache
 from google.appengine.ext import webapp
 from google.appengine.ext.webapp.util import run_wsgi_app
 
-import models
+import config
 
-class MainPage(webapp.RequestHandler):
+import models
+import utils
+import forms
+
+class MainPage(utils.RequestHandler):
 	def get(self, path):
-		self.response.out.write("<html><body>Admin: "+ path + "</body></html>")
+		
+		self.view.inject({ "page": {"title": "Administrator Interface"}})
+		
+		self.response.out.write(self.view.final("admin/base.html"))
