@@ -25,7 +25,10 @@ import utils
 	
 def main():
 	application = webapp.WSGIApplication(
-	[('/admin/(.*)', admin.MainPage)],
+	[
+	('/admin/shorturl/?(.*)', admin.Shorturl),
+	('/admin/(.*)', admin.MainPage)
+	],
 	debug=True)
 	run_wsgi_app(application)
 

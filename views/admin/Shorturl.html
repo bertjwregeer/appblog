@@ -1,0 +1,47 @@
+<h1>Shorturl</h1>
+<p>This is to create shorter URL's for use in documentation and on PCB's.
+There are some limitations to this URL shortener, it is only fired on the MainPage handler as such 
+this can not be used on any other handlers. The path can thus be anything that is not a valid handler.</p>
+<br />
+
+{% if shorturls %}
+<table>
+	<tr>
+		<th>Path</th>
+		<th>HTTP code</th>
+		<th>Location</th>
+		<th>Hits</th>
+	</tr>
+	
+	{% for shorturl in shorturls %}
+	<tr>
+		<td>{{ shorturl.uripath }}</td>
+		<td>{{ shorturl.httpcode }}</td>
+		<td>{{ shorturl.location }}</td>
+		<td>{{ shorturl.hits }}</td>
+	</tr>
+	{% endfor %}
+</table>
+{% endif %}
+
+<br /><br />
+{{ form }}
+<br />
+
+<div id="Usage"><h2>Usage:</h2>
+	<ul>
+		<li><b>Path:</b> <p>Do not start with a slash, any path is allowed as long as it is not a valid handler.</p></li>
+		<li><b>HTTP Code:</b> 
+			<p>The HTTP code to send, this can be one of these values:
+				<ul>
+					<li><b>500:</b> Internal Server Error</li>
+					<li><b>404:</b> File Not Found</li>
+					<li><b>403:</b> Access Denied</li>
+					<li><b>302:</b> Temporary Redirect</li>
+					<li><b>301:</b> Permanent Redirect (Most common)</li>
+				</ul>
+			</p>
+		</li>
+		<li><b>Location:</b> <p>Only required for HTTP error codes 302, and 301.</p></li>
+	</ul>
+</div>

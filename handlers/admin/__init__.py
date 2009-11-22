@@ -16,3 +16,4 @@
 ###
 
 from MainPage import MainPage
+from Shorturl import Shorturl
