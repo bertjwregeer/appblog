@@ -18,7 +18,14 @@
 
 from google.appengine.ext import db
 
+import utils
+
 class Shorturl(db.Model):
 	uripath = db.StringProperty(verbose_name="Path", required=True)
-	httpcode = db.IntegerProperty(verbose_name="HTTP code", required=True)
-	location = db.StringProperty(verbose_name="New location")
+	httpcode = db.IntegerProperty(verbose_name="HTTP code", required=True, default=301, choices=[301, 302, 403, 404, 500])
+	location = db.StringProperty(verbose_name="Location")
+
+	@property
+	def hits(self):
+		count = utils.Count()
+		return count.curcount("shorturl", self.uripath)
