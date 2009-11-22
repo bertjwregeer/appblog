@@ -1,0 +1,182 @@
+/* @override http://localhost:8081/admin/main.css */
+
+/*
+ * Copyright (c) 2009 Bert JW Regeer;
+ *
+ * CSS Reset from: Eric Meyer (http://meyerweb.com/eric/thoughts/2007/05/01/reset-reloaded/)
+***/
+
+html, body, div, span, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td, nav, header, footer {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	outline: 0;
+	font-weight: inherit;
+	font-style: inherit;
+	font-size: 100%;
+	font-family: inherit;
+	vertical-align: baseline;
+}
+
+body {
+	line-height: 1;
+	color: black;
+	background: white;
+}
+
+ol, ul {
+	list-style: none;
+}
+
+
+table {
+	border-collapse: separate;
+	border-spacing: 0;
+}
+
+caption, th, td {
+	text-align: left;
+	font-weight: normal;
+}
+
+blockquote:before, blockquote:after,
+q:before, q:after {
+	content: "";
+}
+
+blockquote, q {
+	quotes: "" "";
+}
+
+/* The HTML5 elements are not properly styled yet */
+
+header, footer, nav, section, article {
+	display:block; 
+}
+
+/* Implement the styles here */
+
+body {
+	min-width: 600px;
+	width: 80%;
+	margin: auto;
+}
+
+header {
+	border-bottom: 2px black solid;
+	width: 100%;
+}
+
+header > h1 {
+	font-size: 300%;
+	font-weight: bold;
+}
+
+header > h2 {
+	font-size: 200%;
+	font-weight: bold;
+	text-align: right;
+}
+
+nav {
+	float: left;
+	width: 20%;
+	overflow: hidden;
+	background-color: whitesmoke;
+	padding: 10px;
+	padding-right: 5px;
+}
+
+#Main {
+	float: right;
+	width: 75%;
+	overflow: hidden;
+	padding: 10px;
+	padding-left: 5px;
+	z-index: 2;
+}
+
+footer {
+	clear: both;
+	text-align: right;
+}
+
+#Main > h1 {
+	font-size: 150%;
+	font-weight: bold;
+}
+
+#Usage {
+	margin-top: 10px;
+	margin-bottom: 10px;
+}
+#Usage > h2 {
+	font-size: 125%;
+	font-weight: bold;
+	margin-bottom: 10px;
+}
+
+#Usage ul {
+	margin-left: 20px;
+	list-style-position: inside;
+	list-style-type: circle;
+}
+
+#Usage ul li p{
+	margin-left: 20px;
+}
+
+form fieldset {
+	border-top: 1px black solid;
+}
+
+form legend {
+	font-size: 110%;
+	margin-left: 20px;
+	background: none;
+}
+
+form label {
+	display: inline;
+	margin-left: 30px;
+	font-weight: bold;
+}
+
+form input, form textarea, form select {
+	display: block;
+	margin-bottom: 10px;
+	margin-left: 30px;
+}
+
+form input[type="text"], form textarea {
+	width: 300px;
+}
+
+form input[type="submit"] {
+	margin-top: 10px;
+}
+
+form .errors {
+	color: red;
+}
+
+table {
+	width: 100%;	
+}
+
+table th {
+	font-weight: bold;
+	border-bottom: 1px solid black;
+}
+
+table td {
+	margin-top: 2px;
+	margin-bottom: 2px;
+}
