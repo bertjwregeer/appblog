@@ -15,4 +15,7 @@ SETTINGS = {
 
 ROOT_PATH = os.path.abspath(os.path.dirname(__file__))
 VIEW_PATH = ROOT_PATH + "/views/"
+
+# Over how many rows do we want to shard the counters.
+# Increase this if you are seeing a lot of waiting on writing counters
 NUM_SHARDS = 10
