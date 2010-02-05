@@ -1,5 +1,3 @@
-/* @override http://localhost:8081/admin/main.css */
-
 /*
  * Copyright (c) 2009 Bert JW Regeer;
  *
@@ -55,7 +53,7 @@ blockquote, q {
 	quotes: "" "";
 }
 
-/* The HTML5 elements are not properly styled yet */
+/* The HTML5 elements are not properly styled yet by browsers that are not aware of HTML5. */
 
 header, footer, nav, section, article {
 	display:block; 

@@ -55,7 +55,7 @@ blockquote, q {
 	quotes: "" "";
 }
 
-/* The HTML5 elements are not properly styled yet */
+/* The HTML5 elements are not properly styled yet by browsers that are not aware of HTML5. */
 
 header, footer, nav, section, article {
 	display:block; 
