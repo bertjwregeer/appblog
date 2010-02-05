@@ -24,7 +24,6 @@ from django import newforms as forms
 
 import models
 
-
 REDIRECT_CHOICES = (
 	(301, "301 - Permanent Redirect"),
 	(302, "302 - Temporary Redirect"),
