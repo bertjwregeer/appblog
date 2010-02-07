@@ -11,6 +11,10 @@ SETTINGS = {
 	"shorturl": True
 }
 
+# Before running your own version, please change this to something that is not easy to guess
+
+SECRET = "GO Hamster GO!"
+
 # Do not modify below this line
 
 ROOT_PATH = os.path.abspath(os.path.dirname(__file__))
