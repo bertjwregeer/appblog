@@ -32,9 +32,14 @@ def htmlquote(text):
     text = text.replace('"', "&quot;")
     return text
 
+def mangle_text(text):
+    from config import SECRET
+    return md5.new(text + SECRET).hexdigest()
+
 def semirandom(seed):
+    from config import SECRET
     x = 0
-    for c in md5.new(seed).digest(): x += ord(c)
+    for c in md5.new(seed + SECRET).digest(): x += ord(c)
     return x / (255*16.)
 
 class _Markdown:
@@ -44,7 +49,7 @@ class _Markdown:
     escapechars = '\\`*_{}[]()>#+-.!'
     escapetable = {}
     for char in escapechars:
-        escapetable[char] = md5.new(char).hexdigest()
+        escapetable[char] = mangle_text(char)
     
     r_multiline = re.compile("\n{2,}")
     r_stripspace = re.compile(r"^[ \t]+$", re.MULTILINE)
@@ -154,7 +159,12 @@ class _Markdown:
 
     def _HashHTMLBlocks(self, text):
         def handler(m):
-            key = md5.new(m.group(1)).hexdigest()
+            key = m.group(1)
+            try:
+                key = key.encode('utf8')
+            except UnicodeDecodeError:
+                key = ''.join(k for k in key if ord(k) < 128)
+            key = mangle_text(key)
             self.html_blocks[key] = m.group(1)
             return "\n\n%s\n\n" % key
 
