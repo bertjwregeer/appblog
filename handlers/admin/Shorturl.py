@@ -47,18 +47,8 @@ class Shorturl(utils.RequestHandler):
 		data = forms.ShorturlForm(data=self.request.POST)
 		
 		if data.is_valid():
-			shorturl = data.save(commit=False)
-			
-			if shorturl.uripath[0:1] == "/":
-				shorturl.uripath = shorturl.uripath[1:]
-			if shorturl.httpcode == 301 or shorturl.httpcode == 302:
-				if shorturl.location != None:
-					# Okay, so even with httpcode 301 and 302 the location is set, whether it is valid or not is not our concern
-					shorturl.put()
-					self.redirect("/admin/shorturl/")
-			else:
-				shorturl.put()
-				self.redirect("/admin/shorturl/")
+			shorturl = data.save()
+			self.redirect("/admin/shorturl/")
 		
 		
 		form = self.view.render("form.html", params={
