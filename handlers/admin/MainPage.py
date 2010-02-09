@@ -1,5 +1,5 @@
 ###
- # Copyright (c) 2009 Bert JW Regeer;
+ # Copyright (c) 2010 Bert JW Regeer;
  #
  # Permission to use, copy, modify, and distribute this software for any
  # purpose with or without fee is hereby granted, provided that the above
@@ -25,7 +25,6 @@ import config
 
 import models
 import utils
-import forms
 
 class MainPage(utils.RequestHandler):
 	def get(self, path):

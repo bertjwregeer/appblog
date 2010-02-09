@@ -1,5 +1,5 @@
 ###
- # Copyright (c) 2009 Bert JW Regeer;
+ # Copyright (c) 2010 Bert JW Regeer;
  #
  # Permission to use, copy, modify, and distribute this software for any
  # purpose with or without fee is hereby granted, provided that the above
@@ -23,7 +23,6 @@ import config
 
 import models
 import utils
-import forms
 
 class Shorturl(utils.RequestHandler):
 	def get(self, path):
@@ -34,7 +33,7 @@ class Shorturl(utils.RequestHandler):
 		shorturls = q.fetch(20)
 		
 		form = self.view.render("form.html", params={
-							"form": forms.ShorturlForm(), 
+							"form": models.shorturl.ShorturlForm(), 
 							"form_action": "admin/shorturl/", 
 							"form_legend": "Add Shorturl"}
 					)
@@ -44,9 +43,10 @@ class Shorturl(utils.RequestHandler):
 		self.response.out.write(self.view.final("admin/base.html"))
 	
 	def post(self, path):
-		data = forms.ShorturlForm(data=self.request.POST)
+		data = models.shorturl.ShorturlForm(data=self.request.POST)
 		
 		if data.is_valid():
+			# TODO: Add error handling, what if adding the new shorturl fails?
 			shorturl = data.save()
 			self.redirect("/admin/shorturl/")
 		
