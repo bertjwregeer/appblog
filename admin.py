@@ -26,6 +26,7 @@ import utils
 def main():
 	application = webapp.WSGIApplication(
 	[
+	('/admin/entry/?(.*)', admin.Entry),
 	('/admin/shorturl/?(.*)', admin.Shorturl),
 	('/admin/(.*)', admin.MainPage)
 	],

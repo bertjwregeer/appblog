@@ -17,3 +17,4 @@
 
 from MainPage import MainPage
 from Shorturl import Shorturl
+from Entry    import Entry
