@@ -1,5 +1,5 @@
 ###
- # Copyright (c) 2009 Bert JW Regeer;
+ # Copyright (c) 2010 Bert JW Regeer;
  #
  # Permission to use, copy, modify, and distribute this software for any
  # purpose with or without fee is hereby granted, provided that the above
@@ -15,14 +15,48 @@
  #
 ###
 
+import logging 
 
 from google.appengine.ext import db
+from google.appengine.ext.webapp import template
+from google.appengine.ext.db import djangoforms
+
+# Django imports
+from django import newforms as forms
+from django.newforms.util import ErrorList, ValidationError
+
+import utils
+
+STATUS_CHOICES = (
+	("draft",     "Draft"),
+	("editor",    "Editor Review"),
+	("published", "Published"),
+)
+
 
 class Entry(db.Model):
 	author = db.UserProperty()
 	title = db.StringProperty(required=True)
-	slug = db.StringProperty(required=True)
-	body = db.TextProperty(required=True)
-	published = db.DateTimeProperty(auto_now_add=True)
-	updated = db.DateTimeProperty(auto_now=True)
+	status = db.StringProperty(required=True, default=STATUS_CHOICES[0][0], choices=[x[0] for x in STATUS_CHOICES])
+	slug = utils.MagicProperty(title, len, required=True)
+	txtbody = db.TextProperty(required=True)
+	body = db.TextProperty()
 	tags = db.ListProperty(db.Key)
+	pubdate = db.DateProperty()
+	pubtime = db.TimeProperty()
+	created = db.DateTimeProperty(auto_now_add=True)
+	updated = db.DateTimeProperty(auto_now=True)
+	
+	@property
+	def hits(self):
+		count = utils.Count()
+		return count.curcount("entry", self.slug)
+
+class EntryForm(djangoforms.ModelForm):
+	status  = forms.CharField(widget=forms.Select(choices=STATUS_CHOICES), required=True, label='Status')
+	txtbody = forms.CharField(widget=forms.Textarea(attrs={"rows": "10"}), required=True, label="Body")
+	
+	class Meta:
+		model = Entry
+		fields = ["title", "txtbody", "status"]
+
