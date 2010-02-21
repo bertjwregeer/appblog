@@ -1,15 +1,17 @@
+{% spaceless %}
 <form method="POST" action="{{ site.appurl }}{{ form_action }}">
 	<fieldset>
 		<legend>{{ form_legend }}</legend>
 		{% for field in form %}
-			{{ field.label_tag }}
-			
-			{% if field.errors %}
-				<span class="errors">
-				{% for error in field.errors %}
-					{{ error|escape }}
-				{% endfor %}
-				</span>
+			{% if not field.is_hidden %}
+				{{ field.label_tag }}
+				{% if field.errors %}
+					<span class="errors">
+					{% for error in field.errors %}
+						{{ error|escape }}
+					{% endfor %}
+					</span>
+				{% endif %}
 			{% endif %}
 			{{ field }}
 		{% endfor %}
@@ -20,3 +22,4 @@
 	<input type="submit" name="Submit">
 	</fieldset>
 </form>
+{% endspaceless %}
