@@ -16,6 +16,7 @@
 ###
 
 import os
+import logging
 from google.appengine.api import users
 from google.appengine.ext.webapp import template
 
@@ -54,13 +55,13 @@ class View():
 						"cururl": self.request.uri 
 						}
 			
-			if config.SETTINGS["contact"].startswith("mailto:"):
+			if config.SETTINGS["contact"].startswith("mailto:") or config.SETTINGS["contact"].startswith("http"):
 				self.defaults['site']['contact'] = config.SETTINGS["contact"]
 			else:
 				if not config.SETTINGS["contact"].startswith("/"):
 					config.SETTINGS["contact"] = "/" + config.SETTINGS["contact"]
-				
 				self.defaults['site']['contact'] = self.request.application_url + config.SETTINGS["contact"]
+	
 	def inject(self, params):
 		"""
 		Allows the addition of extra variables into the defaults that are 
