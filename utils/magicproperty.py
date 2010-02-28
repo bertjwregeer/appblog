@@ -16,33 +16,108 @@
 ###
 
 import logging
+import hashlib
 from google.appengine.ext import db
 
 
-def MagicProperty(prop, magic_func=None, *args, **kw):
+def MagicProperty(prop, magic_func=None, cache_prop=None, *args, **kw):
 	if magic_func:
 		# No pants required.
-		return _MagicProperty(prop, magic_func, *args, **kw)
+		return _MagicProperty(prop, magic_func, cache_prop, *args, **kw)
 	else:
 		# We are putting some pants on the function.
 		def pants(magic_func):
-			return _MagicProperty(prop, magic_func, *args, **kw)
+			return _MagicProperty(prop, magic_func, cache_prop, *args, **kw)
 		return pants
 
+class _MagicDatastore():
+	"""This is an internal class for _MagicProperty."""
+	
+	def __init__(self, val):
+		self.value = val
+	
+	def retval(self):
+		return self.value
 
 class _MagicProperty(db.Property):
 	"""MagicProperty which will modify output based on a function that it is given.
 	
+	This has several ways in which it may be called:
+	
+	In this example we create the model, no caching is done, so any data that is returned from the datastore
+	will be erased the first time that the MagicProperty is accessed and recomputed.
+	
+		class MagicTest(db.Model):
+			title = db.StringProperty(required=True)
+			chars = utils.MagicProperty(title, len, required=True)
+	
+		mytest = MagicTest(title="It was for the good of the school!")
+		
+		>>> print mytest.title
+		It was for the good of the school!
+		>>> print mytest.chars
+		34
+		
+		mytest = MagicTest.all().get()
+		
+		>>> print mytest.title
+		Hello
+		>>> print mytest.chars		
+		5	# Do note, this is recalculated the first time it is called, as long as title does not change it won't be recomputed.
+	
+	In this example we create the model, and we also create a caching property so that even when we get values back 
+	from the datastore we use the cached computed value rather than running the function again.
+	
+		class MagicTesting(db.Model):
+			title = db.StringProperty(required=True)
+			cache = db.UnindexedProperty()
+			chars = utils.MagicProperty(title, len, cache_prop=cache, required=True)
+		
+		mytesting = MagicTesting(title="Get the pocket knife out of my boot.")
+	
+		>>> print mytesting.title
+		Get the pocket knife out of my boot.
+		>>> print mytesting.chars
+		36
+		
+		mytesting = MagicTest.all().get()
+		
+		>>> print mytesting.title
+		How are you?
+		>>> print mytesting.chars	
+		12	# This is not recomputed so long as the title has not changed, however it uses more datastore space to store a hash.
+		
+		
 	Inspired by: 
 	http://appengine-cookbook.appspot.com/recipe/custom-model-properties-are-cute
 	http://code.google.com/appengine/articles/extending_models.html
 	http://googleappengine.blogspot.com/2009/07/writing-custom-property-classes.html
 	
 	"""
-	def __init__(self, prop, magic_func, *args, **kw):
+	def __init__(self, prop, magic_func, cache_prop, *args, **kw):
+		"""
+		Extra parameters you can give this initializer.
+		
+			prop		= Property to be acted upon
+			magic_func	= The function to be called when the property is accessed
+			cache_prop	= The property that can hold our cache, I suggest it is an db.UnindexedProperty() since it just stores sha1 hashes
+		"""
 		super(_MagicProperty, self).__init__(*args, **kw)
 		self.magic_func = magic_func
 		self.magic_prop = prop
+		self.magic_cache = cache_prop
+		
+	def get_cache_val(self, model_instance, class_instance):
+		if self.magic_cache is not None:
+			return self.magic_cache.__get__(model_instance, class_instance)
+		return getattr(model_instance, self.attr_name() + "orig", None)
+			
+	def set_cache_val(self, model_instance, val):
+		val = hashlib.sha1(val).hexdigest()
+		
+		if self.magic_cache is not None:
+			self.magic_cache.__set__(model_instance, val)
+		setattr(model_instance, self.attr_name() + "orig", val)
 	
 	def attr_name(self):
 		# In google.appengine.ex.db there is an explicit warning not to use this method, so we test for it first.
@@ -55,18 +130,24 @@ class _MagicProperty(db.Property):
 		if model_instance is None:
 			return self
 		
-		# TODO: If the property that this one is functioning on is changed, we need a way to know that so that we recalculate
+		cur = self.magic_prop.__get__(model_instance, class_instance)
+		last = self.get_cache_val(model_instance, class_instance)
+		if last == hashlib.sha1(cur).hexdigest():
+			return getattr(model_instance, self.attr_name(), None)
+		magic_done = self.magic_func(cur)
 		
-		# Original __get__ in google.appengine.ext.db has getattr to retrieve the value from the model instance
-		magic_done = getattr(model_instance, self.attr_name(), None)
-		if magic_done is None:
-			magic_done = self.magic_func(self.magic_prop.__get__(model_instance, class_instance))
-			
-			# Set the attribute in the model
-			setattr(model_instance, self._attr_name(), magic_done)
+		# Set the attribute in the model
+		setattr(model_instance, self.attr_name(), magic_done)
+		self.set_cache_val(model_instance, cur)
+		
 		return magic_done
 		
 	
-	def __set__(self, *args):
-		raise db.DerivedPropertyError("MagicProperty is magic. Magic may not be modified.")
+	def __set__(self, model_instance, value):
+		if isinstance(value, _MagicDatastore):
+			setattr(model_instance, self.attr_name(), value.retval())
+		else:
+			raise db.DerivedPropertyError("MagicProperty is magic. Magic may not be modified.")
 	
+	def make_value_from_datastore(self, value):
+		return _MagicDatastore(value)
