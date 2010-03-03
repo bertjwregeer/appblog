@@ -36,7 +36,7 @@ REDIRECT_CHOICES = (
 
 class Shorturl(db.Model):
 	uripath = db.StringProperty(verbose_name="Path", required=True)
-	httpcode = db.IntegerProperty(verbose_name="HTTP code", required=True, default=301, choices=[x[0] for x in REDIRECT_CHOICES])
+	httpcode = db.IntegerProperty(verbose_name="HTTP code", required=True, default=REDIRECT_CHOICES[0][0], choices=[x[0] for x in REDIRECT_CHOICES])
 	location = db.StringProperty(verbose_name="Location")
 
 	def delete(self, *args, **kw):
