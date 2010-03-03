@@ -38,14 +38,23 @@ class Entry(db.Model):
 	author = db.UserProperty()
 	title = db.StringProperty(required=True)
 	status = db.StringProperty(required=True, default=STATUS_CHOICES[0][0], choices=[x[0] for x in STATUS_CHOICES])
-	slug = utils.MagicProperty(title, len, required=True)
-	txtbody = db.TextProperty(required=True)
-	body = db.TextProperty()
+	body = db.TextProperty(required=True)
 	tags = db.ListProperty(db.Key)
 	pubdate = db.DateProperty()
 	pubtime = db.TimeProperty()
 	created = db.DateTimeProperty(auto_now_add=True)
 	updated = db.DateTimeProperty(auto_now=True)
+	
+	# Next items are dynamically generated
+	cache_slug = db.UnindexedProperty()
+	slug = utils.MagicProperty(title, len, cache_prop=cache_slug, required=True)
+	cache_html= db.UnindexedProperty()
+	html = utils.MagicProperty(body, len, cache_prop=cache_html, required=True)
+	
+	def delete(self, *args, **kw):
+		super(Entry, self).delete(*args, **kw)
+		count = utils.Count()
+		count.clear("entry", self.uripath)
 	
 	@property
 	def hits(self):
@@ -54,9 +63,9 @@ class Entry(db.Model):
 
 class EntryForm(djangoforms.ModelForm):
 	status  = forms.CharField(widget=forms.Select(choices=STATUS_CHOICES), required=True, label='Status')
-	txtbody = forms.CharField(widget=forms.Textarea(attrs={"rows": "10"}), required=True, label="Body")
+	body = forms.CharField(widget=forms.Textarea(attrs={"rows": "10"}), required=True, label='Body')
 	
 	class Meta:
 		model = Entry
-		fields = ["title", "txtbody", "status"]
+		fields = ["title", "body", "status"]
 
