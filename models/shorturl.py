@@ -15,6 +15,7 @@
  #
 ###
 
+import logging
 from google.appengine.ext import db
 from google.appengine.ext.webapp import template
 from google.appengine.ext.db import djangoforms
@@ -37,6 +38,11 @@ class Shorturl(db.Model):
 	uripath = db.StringProperty(verbose_name="Path", required=True)
 	httpcode = db.IntegerProperty(verbose_name="HTTP code", required=True, default=301, choices=[x[0] for x in REDIRECT_CHOICES])
 	location = db.StringProperty(verbose_name="Location")
+
+	def delete(self, *args, **kw):
+		super(Shorturl, self).delete(*args, **kw)
+		count = utils.Count()
+		count.clear("shorturl", self.uripath)
 
 	@property
 	def hits(self):
