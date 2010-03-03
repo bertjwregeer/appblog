@@ -1,0 +1,20 @@
+{% if table %}
+<form method="POST" action="{{ site.appurl }}{{ page.self }}delete">
+<table>
+	<tr>
+	<th>Delete / Edit</th>
+	{% for header in table.headers %}<th>{{ header }}</th>{% endfor %}
+	</tr>
+	{% for row in table.data %}
+	<tr>
+		<td><input type="checkbox" name="id" value="{{ row.key }}"> / <a href="{{ site.appurl }}{{ page.self }}edit?id={{ row.key }}">edit</a></td>
+		{% for value in row.props %}<td>{{ value }}</td>{% endfor %}
+	</tr>
+	{% endfor %}
+</table>
+<input type="submit" value="Delete" style="margin-top: 10px;">
+</form>
+{% endif %}
+<div>{% if paginate.prev %}<a href="{{ site.appurl }}{{ page.self }}{{ paginate.prev }}">Previous</a>{% endif %}
+{% if paginate.prev and paginate.next %} | {% endif %}
+{% if paginate.next %}<a href="{{ site.appurl }}{{ page.self }}{{ paginate.next }}">Next</a>{% endif %}</div>
