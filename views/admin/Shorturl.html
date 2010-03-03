@@ -4,25 +4,7 @@ There are some limitations to this URL shortener, it is only fired on the MainPa
 this can not be used on any other handlers. The path can thus be anything that is not a valid handler.</p>
 <br />
 
-{% if shorturls %}
-<table>
-	<tr>
-		<th>Path</th>
-		<th>HTTP code</th>
-		<th>Location</th>
-		<th>Hits</th>
-	</tr>
-	
-	{% for shorturl in shorturls %}
-	<tr>
-		<td>{{ shorturl.uripath }}</td>
-		<td>{{ shorturl.httpcode }}</td>
-		<td>{{ shorturl.location }}</td>
-		<td>{{ shorturl.hits }}</td>
-	</tr>
-	{% endfor %}
-</table>
-{% endif %}
+{{ table }}
 
 <br /><br />
 {{ form }}

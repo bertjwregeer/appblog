@@ -23,38 +23,97 @@ import config
 
 import models
 import utils
+import utils.admin
 
-class Shorturl(utils.RequestHandler):
+class Shorturl(utils.RequestHandler):	
 	def get(self, path):
-		self.view.inject({ "page": {"title": "Administrator Interface"}})
+		self.view.inject({ "page": {"title": "Administrator Interface", "self": "admin/shorturl/"}})
 		
-		# TODO: Implement paging so that when there are more than 20 URL's we can page through them
-		q = models.Shorturl.all()
-		shorturls = q.fetch(20)
+		if path == '':
+			self.get_main(path);
+		if path.startswith('edit'):
+			self.get_edit(path)
 		
-		form = self.view.render("form.html", params={
-							"form": models.shorturl.ShorturlForm(), 
-							"form_action": "admin/shorturl/", 
-							"form_legend": "Add Shorturl"}
-					)
-		
-		self.view.part("body", "admin/Shorturl.html", params={"form": form, "shorturls": shorturls})
-		
+		self.view.part("body", "admin/Shorturl.html", params=self.template_params)
 		self.response.out.write(self.view.final("admin/base.html"))
 	
-	def post(self, path):
-		data = models.shorturl.ShorturlForm(data=self.request.POST)
+	def get_main(self, path):
+		q = models.Shorturl.all().order('uripath')
+		table = utils.admin.paginate_table(self.request, self.view, models.Shorturl, q, properties = ["uripath", "httpcode", "location", "hits"])
 		
+		self.render_form()
+		self.template_params['table'] = table
+	
+	def get_edit(self, path):
+		
+		self.render_form(action="edit");
+	
+	def post(self, path):
+		self.view.inject({ "page": {"title": "Administrator Interface", "self": "/admin/shorturl/"}})
+		
+		if path == 'add':
+			self.post_add(path)
+		if path == 'delete':
+			self.post_del(path)
+		if path == 'edit':
+			self.post_edit(path)
+			
+		self.view.part("body", "admin/Shorturl.html", params=self.template_params)
+		self.response.out.write(self.view.final("admin/base.html"))
+		
+	def post_add(self, path):
+		data = models.shorturl.ShorturlForm(data=self.request.POST)
+
 		if data.is_valid():
 			# TODO: Add error handling, what if adding the new shorturl fails?
-			shorturl = data.save()
+			data.save()
 			self.redirect("/admin/shorturl/")
 		
+		self.render_form(action="add", form=data)
 		
-		form = self.view.render("form.html", params={
+	def post_edit(self, path):
+		data = models.shorturl.ShorturlForm(data=self.request.POST, instance=models.Shorturl.get_by_id(long(self.request.get("id"))))
+
+		if data.is_valid():
+			# TODO: Add error handling, what if adding the new shorturl fails?
+			data.save()
+			self.redirect("/admin/shorturl/")
+
+		self.render_form(action="edit", form=data)
+	def post_del(self, path):
+		ids = [long(x) for x in self.request.get_all("id")]
+		
+		if ids is []:
+			self.redirect("/admin/shorturl/")
+		
+		shorturls = models.Shorturl.get_by_id(ids)
+		
+		for shorturl in shorturls:
+			if shorturl is not None:
+				shorturl.delete()
+			
+		self.redirect("/admin/shorturl")
+
+	def render_form(self, action="add", form=None):
+		if form is None:
+			kwargs = {}
+			if len(self.request.POST) is not 0:
+				kwargs['data'] = self.request.POST;
+			if self.request.get("id") is not '':
+				kwargs['instance'] = models.Shorturl.get_by_id(long(self.request.get("id")));
+				action = action + "?id=" + self.request.get("id")
+			if kwargs == {}:
+				data = models.shorturl.ShorturlForm()
+			else:
+				data = models.shorturl.ShorturlForm(**kwargs)
+		else:
+			data = form
+			if self.request.get("id") is not '':
+				action = action + "?id=" + self.request.get("id")
+		
+		self.template_params['form'] = self.view.render("form.html", params={
 							"form": data,
-							"form_action": "admin/shorturl/",
+							"form_action": "admin/shorturl/" + action,
 							"form_legend": "Add Shorturl"}
 					)
-		self.view.part("body", "admin/Shorturl.html", params={"form": form})
-		self.response.out.write(self.view.final("admin/base.html"))
+		return self.template_params['form']

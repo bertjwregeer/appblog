@@ -141,23 +141,23 @@ form legend {
 	background: none;
 }
 
-form label {
+form fieldset label {
 	display: inline;
 	margin-left: 30px;
 	font-weight: bold;
 }
 
-form input, form textarea, form select {
+form fieldset input, form fieldset textarea, form fieldset select {
 	display: block;
 	margin-bottom: 10px;
 	margin-left: 30px;
 }
 
-form input[type="text"], form textarea {
+form fieldset input[type="text"], form fieldset textarea {
 	width: 300px;
 }
 
-form input[type="submit"] {
+form fieldset input[type="submit"] {
 	margin-top: 10px;
 }
 
