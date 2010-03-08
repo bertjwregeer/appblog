@@ -63,7 +63,7 @@ class Shorturl():
 			memcache.add("shorturl." + path, surl, 3600)
 	
 		if surl:
-			self.count.inc("shorturl", surl.uripath)
+			self.count.inc("shorturl", str(surl.key()))
 			
 			code = surl.httpcode
 			
