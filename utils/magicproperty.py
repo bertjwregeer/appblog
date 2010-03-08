@@ -20,14 +20,14 @@ import hashlib
 from google.appengine.ext import db
 
 
-def MagicProperty(prop, magic_func=None, cache_prop=None, *args, **kw):
+def MagicProperty(prop, magic_func=None, cache_prop=None, pass_instance=False, *args, **kw):
 	if magic_func:
 		# No pants required.
-		return _MagicProperty(prop, magic_func, cache_prop, *args, **kw)
+		return _MagicProperty(prop, magic_func, cache_prop, pass_instance, *args, **kw)
 	else:
 		# We are putting some pants on the function.
 		def pants(magic_func):
-			return _MagicProperty(prop, magic_func, cache_prop, *args, **kw)
+			return _MagicProperty(prop, magic_func, cache_prop, pass_instance, *args, **kw)
 		return pants
 
 class _MagicDatastore():
@@ -66,12 +66,17 @@ class _MagicProperty(db.Property):
 		5	# Do note, this is recalculated the first time it is called, as long as title does not change it won't be recomputed.
 	
 	In this example we create the model, and we also create a caching property so that even when we get values back 
-	from the datastore we use the cached computed value rather than running the function again.
+	from the datastore we use the cached computed value rather than running the function again. Do note that this requires overriding put()
+	to prime the cache as there is currently no way to specify that certain properties should be "saved" before others.
 	
 		class MagicTesting(db.Model):
 			title = db.StringProperty(required=True)
 			cache = db.UnindexedProperty()
 			chars = utils.MagicProperty(title, len, cache_prop=cache, required=True)
+		
+			def put(self, *args, **kw):
+				prime_cache = self.chars
+				super(MagicTesting).put(*args, **kw)
 		
 		mytesting = MagicTesting(title="Get the pocket knife out of my boot.")
 	
@@ -94,7 +99,7 @@ class _MagicProperty(db.Property):
 	http://googleappengine.blogspot.com/2009/07/writing-custom-property-classes.html
 	
 	"""
-	def __init__(self, prop, magic_func, cache_prop, *args, **kw):
+	def __init__(self, prop, magic_func, cache_prop, pass_instance, *args, **kw):
 		"""
 		Extra parameters you can give this initializer.
 		
@@ -106,6 +111,7 @@ class _MagicProperty(db.Property):
 		self.magic_func = magic_func
 		self.magic_prop = prop
 		self.magic_cache = cache_prop
+		self.magic_pass = pass_instance
 		
 	def get_cache_val(self, model_instance, class_instance):
 		if self.magic_cache is not None:
@@ -131,10 +137,19 @@ class _MagicProperty(db.Property):
 			return self
 		
 		cur = self.magic_prop.__get__(model_instance, class_instance)
+		cur = cur.encode('utf-8')		
 		last = self.get_cache_val(model_instance, class_instance)
 		if last == hashlib.sha1(cur).hexdigest():
+			logging.info("Cache hit: %s" % (cur))
 			return getattr(model_instance, self.attr_name(), None)
-		magic_done = self.magic_func(cur)
+		
+		logging.info("Cache miss: %s" % (cur))
+		
+		magic_done = u""
+		if self.magic_pass:
+			magic_done = self.magic_func(model_instance, cur)
+		else:
+			magic_done = self.magic_func(cur)
 		
 		# Set the attribute in the model
 		setattr(model_instance, self.attr_name(), magic_done)
