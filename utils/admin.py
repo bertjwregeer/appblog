@@ -46,7 +46,10 @@ def paginate_table(request, view, model, query, properties=[], count=20):
 	
 	for prop in properties:
 		vname = getattr(model, prop, None)
-		vname = getattr(vname, 'verbose_name', prop.capitalize().replace('_', ' '))
+		vname = getattr(vname, 'verbose_name', None)
+		
+		if vname is None:
+			vname = prop.capitalize().replace('_', ' ')
 		
 		table['headers'].append(vname)
 	
