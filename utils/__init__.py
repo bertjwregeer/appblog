@@ -20,3 +20,53 @@ from shorturl import Shorturl
 from requesthandler import RequestHandler
 from count import Count
 from magicproperty import MagicProperty
+
+import re
+
+# The ones commented out are just going to get procesed by urllib.quote.
+RFC3986_ENCODE = [
+	('!', ""),
+	#('*', ""),
+	#('\'', ""),
+	#('(', ""),
+	#(')', ""),
+	#(';', ""),
+	#(':', ""),
+	('@', " at "),
+	('&', " and "),
+	('=', " equals "),
+	('+', " plus "),
+	('$', "dollar "),
+	(',', ""),
+	('/', " slash "),
+	('?', ""),
+	('%', "percent"),
+	('#', "pound"),
+	#('[', ""),
+	#(']', ""),
+	
+	('<', " less-than "),
+	('>', " greater-than "),
+	
+	#('{', ""),
+	#('}', ""),
+	('|', "or"),
+	('\\', "backslash "),
+	('^', " xor "),
+	('`', ""),
+	(' ', "_")		# Last, so that if there are spaces in any of the above they get processed as well
+]
+
+def slugify(s):
+	"""
+		This will create a "slug" that may then be used to identify an article or entry. This does not guarantee that it is 
+		unique in any way shape or form.
+	"""
+	
+	for special in RFC3986_ENCODE:
+		s = s.replace(special[0], special[1])
+	
+	s = re.sub("_{1,2}", "_", s)
+	s = re.sub("\.", "", s)
+	
+	return s.lower()
