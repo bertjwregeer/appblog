@@ -40,14 +40,14 @@ class Shorturl(db.Model):
 	location = db.StringProperty(verbose_name="Location")
 
 	def delete(self, *args, **kw):
-		super(Shorturl, self).delete(*args, **kw)
 		count = utils.Count()
-		count.clear("shorturl", self.uripath)
+		count.clear("shorturl", str(self.key()))
+		super(Shorturl, self).delete(*args, **kw)
 
 	@property
 	def hits(self):
 		count = utils.Count()
-		return count.curcount("shorturl", self.uripath)
+		return count.curcount("shorturl", str(self.key()))
 		
 	
 
