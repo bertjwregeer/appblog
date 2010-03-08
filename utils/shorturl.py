@@ -16,6 +16,7 @@
 ###
 
 import cgi
+import urllib
 from google.appengine.ext import webapp
 from google.appengine.ext.webapp.util import run_wsgi_app
 from google.appengine.api import memcache
@@ -50,6 +51,8 @@ class Shorturl():
 		302 = Temporary redirect
 		301 = Permanent Redirect
 		"""
+		
+		path = urllib.unquote(path).decode("utf-8")
 		
 		surl = memcache.get("shorturl." + path)
 		
