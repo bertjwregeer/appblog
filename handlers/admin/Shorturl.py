@@ -25,10 +25,12 @@ import models
 import utils
 import utils.admin
 
-class Shorturl(utils.RequestHandler):	
-	def get(self, path):
+class Shorturl(utils.RequestHandler):
+	def initialize(self, *args, **kw):
+		super(Shorturl, self).initialize(*args, **kw);
 		self.view.inject({ "page": {"title": "Administrator Interface", "self": "admin/shorturl/"}})
 		
+	def get(self, path):
 		if path == '':
 			self.get_main(path);
 		if path.startswith('edit'):
@@ -48,9 +50,7 @@ class Shorturl(utils.RequestHandler):
 		
 		self.render_form(action="edit");
 	
-	def post(self, path):
-		self.view.inject({ "page": {"title": "Administrator Interface", "self": "/admin/shorturl/"}})
-		
+	def post(self, path):		
 		if path == 'add':
 			self.post_add(path)
 		if path == 'delete':
