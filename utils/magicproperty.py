@@ -19,7 +19,6 @@ import logging
 import hashlib
 from google.appengine.ext import db
 
-
 def MagicProperty(prop, magic_func=None, cache_prop=None, pass_instance=False, *args, **kw):
 	if magic_func:
 		# No pants required.
@@ -157,12 +156,19 @@ class _MagicProperty(db.Property):
 		
 		return magic_done
 		
-	
 	def __set__(self, model_instance, value):
 		if isinstance(value, _MagicDatastore):
 			setattr(model_instance, self.attr_name(), value.retval())
 		else:
 			raise db.DerivedPropertyError("MagicProperty is magic. Magic may not be modified.")
+	
+	def get_value_for_datastore(self, model_instance):
+		output = super(_MagicProperty, self).get_value_for_datastore(model_instance)
+		
+		if len(output) > 500:
+			return db.Text(output)
+		else:
+			return output
 	
 	def make_value_from_datastore(self, value):
 		return _MagicDatastore(value)
